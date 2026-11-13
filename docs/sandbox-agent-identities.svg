@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="850" viewBox="0 0 1280 850" role="img" aria-labelledby="title description">
+  <title id="title">Agent identities for two Azure Container Apps sandboxes</title>
+  <desc id="description">A trusted controller maps two untrusted sandbox workloads to separate child agent identities. A trusted gateway outside the sandboxes authenticates the blueprint through its own managed identity, obtains child-specific Storage tokens, and reads separately authorized Blob containers. Group managed identity is infrastructure only.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <marker id="blue-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <style>
+      text { font-family: Segoe UI, Arial, sans-serif; fill: #0f172a; }
+      .title { font-size: 25px; font-weight: 700; }
+      .heading { font-size: 18px; font-weight: 700; }
+      .body { font-size: 15px; }
+      .small { font-size: 13px; }
+      .muted { fill: #475569; }
+      .line { fill: none; stroke: #334155; stroke-width: 2.2; marker-end: url(#arrow); }
+      .relation { fill: none; stroke: #2563eb; stroke-width: 2; stroke-dasharray: 7 5; marker-end: url(#blue-arrow); }
+    </style>
+  </defs>
+  <rect width="1280" height="850" fill="#ffffff"/>
+  <text x="30" y="39" class="title">One blueprint, two child identities, isolated Blob access</text>
+  <text x="30" y="64" class="body muted">Recommended custom gateway architecture; native sandbox agent binding is a separate preview capability.</text>
+
+  <rect x="30" y="94" width="470" height="90" rx="12" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="50" y="124" class="heading">Trusted controller / provisioner</text>
+  <text x="50" y="150" class="body">Creates Entra identities, sandbox bindings, and RBAC</text>
+  <text x="50" y="171" class="small muted">Durable mapping: sandbox -&gt; workload -&gt; child identity</text>
+
+  <rect x="30" y="220" width="470" height="470" rx="14" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+  <text x="50" y="252" class="heading">ACA sandbox group: agent-workers</text>
+  <text x="50" y="276" class="small muted">Microsoft.App/sandboxGroups | shared infrastructure</text>
+
+  <rect x="55" y="304" width="420" height="115" rx="10" fill="#ffffff" stroke="#f97316"/>
+  <text x="75" y="334" class="heading">Sandbox A: untrusted microVM</text>
+  <text x="75" y="361" class="body">Workload job-a | mapped to child identity A</text>
+  <text x="75" y="386" class="small muted">No blueprint credential or gateway MI access</text>
+  <text x="75" y="406" class="small muted">Authenticated request: list / read permitted blob</text>
+
+  <rect x="55" y="446" width="420" height="115" rx="10" fill="#ffffff" stroke="#f97316"/>
+  <text x="75" y="476" class="heading">Sandbox B: untrusted microVM</text>
+  <text x="75" y="503" class="body">Workload job-b | mapped to child identity B</text>
+  <text x="75" y="528" class="small muted">No authority to select identity A</text>
+  <text x="75" y="548" class="small muted">Lease and caller proof checked on each request</text>
+
+  <rect x="55" y="600" width="420" height="64" rx="8" fill="#ffedd5" stroke="#fdba74"/>
+  <text x="75" y="625" class="body">Group managed identity: infrastructure only</text>
+  <text x="75" y="648" class="small muted">Not the credential used to impersonate child agents</text>
+
+  <rect x="545" y="300" width="290" height="192" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <text x="565" y="332" class="heading">Trusted identity / Blob gateway</text>
+  <text x="565" y="359" class="body">Outside untrusted sandboxes</text>
+  <text x="565" y="387" class="body">1. Authenticate workload + lease</text>
+  <text x="565" y="412" class="body">2. Resolve child ID server-side</text>
+  <text x="565" y="437" class="body">3. Get child-specific Storage token</text>
+  <text x="565" y="462" class="body">4. Enforce container + operation</text>
+  <text x="565" y="483" class="small muted">Returns data, not a reusable bearer token</text>
+
+  <rect x="545" y="208" width="290" height="62" rx="9" fill="#eff6ff" stroke="#60a5fa"/>
+  <text x="565" y="234" class="body">Gateway managed identity</text>
+  <text x="565" y="256" class="small muted">Blueprint FIC trusts this identity only</text>
+
+  <rect x="880" y="94" width="370" height="400" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="900" y="126" class="heading">Microsoft Entra ID</text>
+  <rect x="905" y="151" width="320" height="98" rx="9" fill="#ffffff" stroke="#60a5fa"/>
+  <text x="925" y="181" class="heading">Blueprint + blueprint principal</text>
+  <text x="925" y="208" class="body">One agent type / trust boundary</text>
+  <text x="925" y="233" class="small muted">FIC: gateway MI principal as trusted subject</text>
+  <rect x="905" y="305" width="320" height="64" rx="9" fill="#ffffff" stroke="#60a5fa"/>
+  <text x="925" y="332" class="heading">Child agent identity A</text>
+  <text x="925" y="355" class="small muted">Independent authorization for job-a</text>
+  <rect x="905" y="400" width="320" height="64" rx="9" fill="#ffffff" stroke="#60a5fa"/>
+  <text x="925" y="427" class="heading">Child agent identity B</text>
+  <text x="925" y="450" class="small muted">Independent authorization for job-b</text>
+
+  <rect x="880" y="545" width="370" height="206" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="900" y="577" class="heading">Blob Storage: one account</text>
+  <rect x="905" y="596" width="320" height="55" rx="8" fill="#ffffff" stroke="#c084fc"/>
+  <text x="925" y="619" class="body">Container job-a</text>
+  <text x="925" y="641" class="small muted">Storage Blob Data Reader: identity A</text>
+  <rect x="905" y="672" width="320" height="55" rx="8" fill="#ffffff" stroke="#c084fc"/>
+  <text x="925" y="695" class="body">Container job-b</text>
+  <text x="925" y="717" class="small muted">Storage Blob Data Reader: identity B</text>
+
+  <path d="M 250 184 L 250 220" class="relation"/>
+  <path d="M 500 139 L 530 139 L 530 315 L 545 315" class="relation"/>
+  <text x="550" y="139" class="small muted">trusted mapping / policy</text>
+  <path d="M 690 270 L 690 300" class="relation"/>
+  <path d="M 835 237 L 865 237 L 865 200 L 905 200" class="relation"/>
+  <path d="M 1065 249 L 1065 305" class="relation"/>
+  <path d="M 1195 249 L 1195 400" class="relation"/>
+  <path d="M 475 361 L 545 361" class="line"/>
+  <path d="M 475 503 L 520 503 L 520 440 L 545 440" class="line"/>
+  <path d="M 835 345 L 855 345 L 855 281 L 1000 281 L 1000 249" class="line"/>
+  <text x="898" y="272" class="small muted">Entra token exchange</text>
+  <path d="M 835 414 L 853 414 L 853 623 L 905 623" class="line"/>
+  <path d="M 780 492 L 780 699 L 905 699" class="line"/>
+  <text x="613" y="545" class="small muted">Blob HTTP uses child A/B</text>
+  <text x="613" y="565" class="small muted">bearer, never gateway MI bearer</text>
+
+  <path d="M 30 788 L 75 788" class="line"/>
+  <text x="86" y="793" class="small">Request / data access</text>
+  <path d="M 290 788 L 335 788" class="relation"/>
+  <text x="346" y="793" class="small">Identity relationship / trusted configuration</text>
+  <text x="30" y="825" class="small muted">Important: per-sandbox labels or an agent ID environment variable are not caller authentication or impersonation isolation.</text>
+</svg>

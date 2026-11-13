@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+.env
+.agent-identity-state.json
+.agent-identity-state.tmp
+.agent365-registration.json
+.agent365-registration.tmp
