@@ -12,7 +12,8 @@ These Python notebooks take you from a basic conversational agent to an agent wi
 | [02 - Provision an agent identity](02_provision_agent_identity.ipynb) | Use interactive Microsoft Graph sign-in and explicit REST requests to create or reuse an agent identity blueprint, its service principal, and a child agent identity. Read them back to verify their relationships. | Real Entra identity objects and IDs to reuse in later notebooks. No runtime credential or Agent 365 registration yet. |
 | [03a - Authenticate locally with a client secret](03a_agent_identity_client_secret.ipynb) | Authenticate the blueprint with a short-lived secret. Configure Graph delegated permissions, consent, and scope inheritance; authorize the notebook's user sign-in client; then give the agent two tools: read your Graph profile on your behalf and read a sample Blob as itself. | A local agent demonstrating **delegated OBO** and **app-only** access with the same child identity. |
 | [03b - Authenticate on Azure with managed identity](03b_agent_identity_managed_identity.ipynb) | Run the same two-tool example on an Azure host, replacing the blueprint secret with a user-assigned managed identity and federated trust. | The same agent-identity authorization without a blueprint secret. You supply the Azure host and attached managed identity; the notebook does not deploy them. |
-| [04 - Register with Agent 365 and send activity traces](04_agent365_registration_observability.ipynb) | Register the existing child identity, acquire its app-only Observability API token, configure OpenTelemetry, and send a smoke-test activity. Optionally trace a real model call and link the identity as a Foundry External Agent. | An Agent 365 registration and an activity-trace export you can verify. This does not deploy an agent endpoint or publish a Foundry hosted agent. |
+| [03c - Blueprint credential only](03c_blueprint_credential_only.ipynb) | Configure a local blueprint secret or Azure managed-identity federation, check local configuration, and continue directly to 04. Skip all Graph OBO, frontend authorization, and Blob tool setup. | The credential configuration for telemetry without granting the agent workload permissions. Authentication and registration are tested in 04. |
+| [04 - Register with Agent 365 and send activity traces](04_agent365_registration_observability.ipynb) | Register the existing child identity, acquire its app-only Observability API token, and send activity spans to both Agent 365 and Foundry-linked Application Insights by default. Supply your connection string in `.env`. Optionally trace a real model call and link the identity as a Foundry External Agent. | An Agent 365 registration and dual-destination activity-trace export you can verify. This does not deploy an agent endpoint or publish a Foundry hosted agent. |
 
 ## Recommended order
 
@@ -21,16 +22,18 @@ These Python notebooks take you from a basic conversational agent to an agent wi
  |
 02  Create its Entra identity
  |
- +-- 03a  Local development: blueprint client secret
+ +-- 03a  Local secret + Graph/Blob tools
  |        OR
- +-- 03b  Azure host: managed identity + federation
+ +-- 03b  Azure managed identity + Graph/Blob tools
+ |        OR
+ +-- 03c  Credential only (no workload permissions)
  |
 04  Agent 365 registration and observability
 ```
 
-**03a and 03b are alternatives, not consecutive requirements.** Start with 03a if you are working on your laptop. Choose 03b if you already have a suitable Azure host with a user-assigned managed identity attached.
+**03a, 03b, and 03c are alternatives, not consecutive requirements.** For the tool examples, choose 03a on your laptop or 03b on a suitable Azure host. For observability without tool permissions, choose 03c.
 
-If you only want registration and telemetry, complete 02 and the **blueprint credential setup** in either 03a or 03b, then move to 04. You do not need the Graph OBO, user-login, or Blob tool sections for telemetry. Notebook 04's smoke test also does not need a model call.
+If you only want registration and telemetry, follow **02 -> 03c -> 04**. Notebook 03c supports both local secrets and Azure managed-identity federation. No Graph OBO, user-login, or Blob tool sections are required. Notebook 04's smoke test also does not need a model call. One-time administrative provisioning/registration permissions are still required; these are not runtime agent workload permissions.
 
 ## Before you start
 
