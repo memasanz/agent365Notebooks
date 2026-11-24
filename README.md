@@ -59,7 +59,15 @@ az login
 
 The install command uses the Microsoft package proxy for managed devices.
 
-Create a local `.env` file with your initial model configuration:
+For a new checkout, copy [.env.example](.env.example) to `.env` without overwriting an existing file:
+
+```powershell
+if (-not (Test-Path -LiteralPath .env)) {
+    Copy-Item -LiteralPath .env.example -Destination .env
+}
+```
+
+The template groups settings by notebook. Start by filling your model configuration:
 
 ```dotenv
 FOUNDRY_PROJECT_ENDPOINT=https://YOUR-RESOURCE.services.ai.azure.com/api/projects/YOUR-PROJECT
@@ -98,7 +106,8 @@ Notebook 04 defaults to `A365_CAPTURE_CONTENT=false`; enabling it exports prompt
 ## Supporting files
 
 - [requirements.txt](requirements.txt): shared Python dependencies.
-- [New-AgentIdentityProvisioningClient.ps1](New-AgentIdentityProvisioningClient.ps1): creates or reuses notebook 02's interactive provisioning app. Admin consent is a separate, explicit step.
+- [.env.example](.env.example): placeholder configuration grouped by notebook; copy to your ignored local `.env` and fill settings as you go.
+- [New-AgentIdentityProvisioningClient.ps1](New-AgentIdentityProvisioningClient.ps1): creates or reuses notebook 02's interactive provisioning app. Add `-IncludeAgent365Registration` for notebook 04's administrative registration/sponsor-read permissions. Admin consent remains a separate, explicit `-GrantAdminConsent` step.
 - [agent-guide.txt](agent-guide.txt): sample guide content for the Blob tool example.
 - [Sandbox agent identity architecture](docs/sandbox-agent-identities.md): a separate design note about identity isolation for Azure Container Apps Sandboxes, not another runnable notebook.
 - [my-agent-z689vi](my-agent-z689vi/README.md): a separate agent project with its own README, not a prerequisite for the root notebook sequence.

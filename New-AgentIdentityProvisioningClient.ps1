@@ -1,7 +1,7 @@
 #Requires -Version 7.0
 <#
 .SYNOPSIS
-Creates the interactive Microsoft Graph client used by notebook 02.
+Creates the interactive Microsoft Graph client used by notebooks 02 and 04.
 .DESCRIPTION
 Requires Microsoft.Graph.Authentication and an account authorized to manage
 app registrations. GrantAdminConsent additionally requires authority to grant
@@ -11,6 +11,8 @@ Application Administrator).
 This bootstraps a normal single-tenant public client, not an agent blueprint.
 Existing redirect URIs, API permissions, and consent scopes are preserved.
 No credentials are created and .env is not modified.
+IncludeAgent365Registration adds notebook 04's two administrative delegated
+permissions. GrantAdminConsent remains a separate, explicit opt-in.
 .EXAMPLE
 .\New-AgentIdentityProvisioningClient.ps1 -TenantId YOUR-TENANT-GUID -WhatIf
 .EXAMPLE
@@ -19,6 +21,10 @@ No credentials are created and .env is not modified.
 .\New-AgentIdentityProvisioningClient.ps1 -TenantId YOUR-TENANT-GUID -GrantAdminConsent
 .EXAMPLE
 .\New-AgentIdentityProvisioningClient.ps1 -TenantId YOUR-TENANT-GUID -ApplicationObjectId EXISTING-APP-OBJECT-GUID
+.EXAMPLE
+.\New-AgentIdentityProvisioningClient.ps1 -TenantId YOUR-TENANT-GUID -IncludeAgent365Registration -WhatIf
+.EXAMPLE
+.\New-AgentIdentityProvisioningClient.ps1 -TenantId YOUR-TENANT-GUID -IncludeAgent365Registration -GrantAdminConsent
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
@@ -30,7 +36,9 @@ param(
 
     [guid] $ApplicationObjectId = [guid]::Empty,
 
-    [switch] $GrantAdminConsent
+    [switch] $GrantAdminConsent,
+
+    [switch] $IncludeAgent365Registration
 )
 
 $ErrorActionPreference = 'Stop'
@@ -63,6 +71,9 @@ $permissions = @(
     'AgentIdentity.Create.All'
     'AgentIdentity.Read.All'
 )
+if ($IncludeAgent365Registration) {
+    $permissions += @('AgentRegistration.ReadWrite.All', 'User.ReadBasic.All')
+}
 
 function Get-GraphCollection {
     param([string] $Uri)
