@@ -236,7 +236,7 @@ az role assignment create `
     --scope $ContainerScope
 ```
 
-For Entra agent identities, Microsoft documents that object ID and app/client ID have the same value. For blueprints and managed identities, their object IDs and client IDs are different.
+For Entra agent identities, Microsoft documents that object ID and app/client ID have the same value. For blueprints, use the `id` and `appId` returned by Graph for their respective purposes; do not assume the values must differ. Managed identities have different object/principal IDs and client IDs.
 
 **A blob-name prefix is not a standard Azure RBAC scope.** Do not claim that `job-a/` and `job-b/` prefixes in one shared container are isolated by a container-level role assignment. Use separate containers, or deliberately implement and test supported Storage ABAC conditions/path authorization for a shared container.
 

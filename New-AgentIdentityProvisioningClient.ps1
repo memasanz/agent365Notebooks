@@ -12,7 +12,9 @@ This bootstraps a normal single-tenant public client, not an agent blueprint.
 Existing redirect URIs, API permissions, and consent scopes are preserved.
 No credentials are created and .env is not modified.
 IncludeAgent365Registration adds notebook 04's two administrative delegated
-permissions. GrantAdminConsent remains a separate, explicit opt-in.
+permissions and its http://localhost:8401 desktop redirect. The other notebooks'
+http://localhost:8400 redirect is retained. GrantAdminConsent remains a separate,
+explicit opt-in.
 .EXAMPLE
 .\New-AgentIdentityProvisioningClient.ps1 -TenantId YOUR-TENANT-GUID -WhatIf
 .EXAMPLE
@@ -62,6 +64,10 @@ if ([guid](Get-MgContext).TenantId -ne $TenantId) {
 $graphBase = 'https://graph.microsoft.com/v1.0'
 $graphAppId = '00000003-0000-0000-c000-000000000000'
 $redirectUri = 'http://localhost:8400'
+$requiredRedirectUris = @($redirectUri)
+if ($IncludeAgent365Registration) {
+    $requiredRedirectUris += 'http://localhost:8401'
+}
 $permissions = @(
     'User.Read'
     'AgentIdentityBlueprint.Create'
@@ -135,7 +141,7 @@ if (-not $PSCmdlet.ShouldProcess("$DisplayName in tenant $TenantId", $action)) {
 }
 
 $requiredResourceAccess = @()
-$redirectUris = @($redirectUri)
+$redirectUris = @($requiredRedirectUris)
 if ($application) {
     foreach ($resource in $application['requiredResourceAccess']) {
         if ($resource['resourceAppId'] -eq $graphAppId) {
@@ -228,7 +234,7 @@ $configuredScopeIds = @(
         }
     }
 )
-if ($redirectUri -notin $verifiedApp['publicClient']['redirectUris'] -or
+if (@($requiredRedirectUris | Where-Object { $_ -notin $verifiedApp['publicClient']['redirectUris'] }).Count -or
     @($newResourceAccess | Where-Object { $_['type'] -eq 'Scope' -and $_['id'] -notin $configuredScopeIds }).Count) {
     throw 'Read-back verification of the redirect URI or delegated permissions failed.'
 }

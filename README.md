@@ -85,7 +85,7 @@ Open [notebook 01](01_create_agent.ipynb), select the repository's `.venv` under
 | Identity | Its job |
 | --- | --- |
 | Your provisioning user and provisioning app | Perform administrative Graph setup. These are not the runtime agent identity. |
-| Agent identity blueprint | Defines the agent type and holds its runtime credential or federated trust. Its application/client ID and directory object ID are different values. |
+| Agent identity blueprint | Defines the agent type and holds its runtime credential or federated trust. Its application/client ID and directory object ID serve different purposes but can have the same value; use the IDs returned by Graph. |
 | Blueprint principal | Represents that blueprint in your tenant. Notebook 02 creates or reuses it explicitly. |
 | Child agent identity | Represents the individual agent instance and receives its resource access. Use this identity for Blob RBAC and telemetry attribution, not the blueprint. |
 | Notebook user sign-in client in 03a/03b | Obtains the incoming user token for OBO. It is an OAuth client, not a separate frontend you need to build or deploy. |
