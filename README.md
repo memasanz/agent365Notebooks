@@ -107,7 +107,7 @@ Notebook 04 defaults to `A365_CAPTURE_CONTENT=false`; enabling it exports prompt
 
 - [requirements.txt](requirements.txt): shared Python dependencies.
 - [.env.example](.env.example): placeholder configuration grouped by notebook; copy to your ignored local `.env` and fill settings as you go.
-- [New-AgentIdentityProvisioningClient.ps1](New-AgentIdentityProvisioningClient.ps1): creates or reuses notebook 02's interactive provisioning app. Add `-IncludeAgent365Registration` for notebook 04's administrative registration/sponsor-read permissions. Admin consent remains a separate, explicit `-GrantAdminConsent` step.
+- [New-AgentIdentityProvisioningClient.ps1](New-AgentIdentityProvisioningClient.ps1): creates or reuses the interactive provisioning app. Notebook 02's commands include `-IncludeAgent365Registration` to prepare all nine permissions for both 02 and 04 upfront. Admin consent remains a separate, explicit `-GrantAdminConsent` step.
 - [agent-guide.txt](agent-guide.txt): sample guide content for the Blob tool example.
 - [Sandbox agent identity architecture](docs/sandbox-agent-identities.md): a separate design note about identity isolation for Azure Container Apps Sandboxes, not another runnable notebook.
 - [my-agent-z689vi](my-agent-z689vi/README.md): a separate agent project with its own README, not a prerequisite for the root notebook sequence.
